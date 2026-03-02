@@ -1,4 +1,4 @@
-# Auth FastAPI https://icons8.com.br/icon/ZeaY7GVy1j1L/api |  SQL 🛢️ |  JWT 🔐 | TOTP 🔑 | GOOGLE AUTHENTICATOR 🇬 Google | QR CODE ⛶ 
+# Auth FastAPI https://img.icons8.com/?size=100&id=ZeaY7GVy1j1L&format=png&color=000000 |  SQL 🛢️ |  JWT 🔐 | TOTP 🔑 | GOOGLE AUTHENTICATOR 🇬 Google | QR CODE ⛶ 
 API de autenticação moderna construída com FastAPI, JWT, TOTP (2FA) e SQLAlchemy, focada em boas práticas de segurança e organização de código para aplicações reais em produção.
 
 Este projeto foi desenvolvido para demonstrar domínio de backend em Python, desde modelagem de usuários e tokens até autenticação em duas etapas integrada com apps como Google Authenticator.
