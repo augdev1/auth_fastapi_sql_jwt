@@ -12,7 +12,6 @@ Este projeto foi desenvolvido para demonstrar domínio de backend em Python, des
 - Endpoints protegidos
 - Registro de ações do usuário
 - Migrações de banco de dados com Alembic
-<img width="50" height="50" alt="icons8-autenticador-do-google-50" src="https://github.com/user-attachments/assets/fed4e5a6-d18d-4d82-a855-ad33a4447b6b" />
 
 ## Estrutura do Projeto
 
