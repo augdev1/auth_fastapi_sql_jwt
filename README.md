@@ -1,6 +1,7 @@
-# Auth FastAPI
+# Auth FastAPI SQL JWT 🔐
+API de autenticação moderna construída com FastAPI, JWT, TOTP (2FA) e SQLAlchemy, focada em boas práticas de segurança e organização de código para aplicações reais em produção.
 
-Esta é uma aplicação FastAPI que fornece autenticação de usuário, incluindo registro, login, endpoints protegidos e autenticação de dois fatores (2FA).
+Este projeto foi desenvolvido para demonstrar domínio de backend em Python, desde modelagem de usuários e tokens até autenticação em duas etapas integrada com apps como Google Authenticator.
 
 ## Funcionalidades
 
