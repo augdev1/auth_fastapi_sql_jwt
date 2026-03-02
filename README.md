@@ -1,6 +1,4 @@
-# Auth FastAPI |  SQL 🛢️ |  JWT 🔐 | TOTP 🔑 | GOOGLE AUTHENTICATOR  <img
-  src="https://github.com/user-attachments/assets/852ede12-ed36-4948-9fe6-601b7e137869"alt="image"width="120"/> | QR CODE ⛶ 
-
+# Auth FastAPI |  SQL 🛢️ |  JWT 🔐 | TOTP 🔑 | GOOGLE AUTHENTICATOR 
 API de autenticação moderna construída com FastAPI, JWT, TOTP (2FA) e SQLAlchemy, focada em boas práticas de segurança e organização de código para aplicações reais em produção.
 
 Este projeto foi desenvolvido para demonstrar domínio de backend em Python, desde modelagem de usuários e tokens até autenticação em duas etapas integrada com apps como Google Authenticator.
