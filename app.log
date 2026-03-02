@@ -32,3 +32,13 @@ INFO:root:Login: bira
 INFO:root:Login: analista1
 INFO:root:Access: analista1
 INFO:root:Access: analista1
+INFO:root:Login: augdev
+INFO:root:Access: augdev
+INFO:root:Login: skrillex
+INFO:root:Access: skrillex
+INFO:root:Login: rugal
+INFO:root:2FA Login successful: rugal
+INFO:root:Login: seth
+INFO:root:Access: seth
+INFO:root:Login: juba
+INFO:root:Access: juba

@@ -1,98 +1,102 @@
-# Auth FastAPI com PostgreSQL
+# Auth FastAPI
 
-Este é um sistema de autenticação robusto desenvolvido com **FastAPI** e **PostgreSQL**. O projeto inclui registro de usuários, login com geração de tokens JWT (JSON Web Tokens), rotas protegidas e um sistema de log de atividades salvo no banco de dados.
+Esta é uma aplicação FastAPI que fornece autenticação de usuário, incluindo registro, login, endpoints protegidos e autenticação de dois fatores (2FA).
 
-## 🚀 Tecnologias Utilizadas
+## Funcionalidades
 
-- **Python 3.8+**
-- **FastAPI**: Framework web moderno e rápido.
-- **SQLAlchemy**: ORM para interação com o banco de dados.
-- **PostgreSQL**: Banco de dados relacional.
-- **Python-Jose**: Para criação e verificação de tokens JWT.
-- **Passlib**: Para hash de senhas (configurado com `pbkdf2_sha256`).
+- Registro de usuário
+- Login de usuário com token JWT
+- Autenticação de dois fatores (2FA) usando TOTP
+- Geração de QR Code para configuração fácil do 2FA em aplicativos de autenticação
+- Endpoints protegidos
+- Registro de ações do usuário
+- Migrações de banco de dados com Alembic
 
-## ⚙️ Pré-requisitos
+## Estrutura do Projeto
 
-Antes de começar, certifique-se de ter instalado:
-- Python
+```
+.
+├── alembic.ini
+├── app.log
+├── auth.py
+├── crud.py
+├── database.py
+├── main.py
+├── models.py
+├── poetry.lock
+├── pyproject.toml
+├── README.md
+├── requirements.txt
+├── schemas.py
+├── .git/
+├── .venv/
+├── .vscode/
+│   └── settings.json
+└── migrations/
+    ├── env.py
+    ├── README
+    ├── script.py.mako
+    └── versions/
+```
+
+## Começando
+
+### Pré-requisitos
+
+- Python 3.10+
+- Poetry
 - PostgreSQL
 
-## 🗄️ Configuração do Banco de Dados
+### Instalação
 
-O projeto está configurado para conectar-se a um banco de dados PostgreSQL local.
+1.  **Clone o repositório:**
 
-1. Crie um banco de dados chamado `cyberdb` no seu PostgreSQL.
-2. Verifique as credenciais no arquivo `database.py`. A configuração atual espera:
-   - **Usuário:** `postgres`
-   - **Senha:** `qwerty123`
-   - **Host:** `localhost`
-   - **Porta:** `5432`
-   - **Banco:** `cyberdb`
+    ```bash
+    git clone <url-do-repositorio>
+    cd auth-fastapi
+    ```
 
-> **Nota:** Se suas credenciais forem diferentes, altere a variável `SQLALCHEMY_DATABASE_URL` no arquivo `database.py`.
+2.  **Instale as dependências usando o Poetry:**
 
-## 📦 Instalação
+    ```bash
+    poetry install
+    ```
 
-1. Clone o repositório ou baixe os arquivos.
-2. Crie um ambiente virtual (recomendado):
-   ```bash
-   python -m venv .venv
-   # Windows
-   .venv\Scripts\activate
-   # Linux/Mac
-   source .venv/bin/activate
-   ```
-3. Instale as dependências:
-   ```bash
-   pip install -r requirements.txt
-   ```
+3.  **Configure o banco de dados:**
 
-## ▶️ Executando a Aplicação
+    Certifique-se de ter um banco de dados PostgreSQL criado. Atualize a URL do banco de dados em `database.py`:
 
-Para iniciar o servidor de desenvolvimento, execute:
+    ```python
+    SQLALCHEMY_DATABASE_URL = "postgresql://usuario:senha@host:porta/nomedobanco"
+    ```
+
+4.  **Execute as migrações do banco de dados:**
+
+    Atualize a `sqlalchemy.url` em `alembic.ini` para corresponder à sua string de conexão do banco de dados e execute:
+
+    ```bash
+    alembic upgrade head
+    ```
+
+### Executando a Aplicação
+
+Para executar a aplicação, use o uvicorn:
 
 ```bash
 uvicorn main:app --reload
 ```
 
-O servidor iniciará em `http://127.0.0.1:8000`.
+A aplicação estará disponível em `http://127.0.0.1:8000`.
 
-## 📚 Documentação da API (Swagger UI)
+## Endpoints da API
 
-O FastAPI gera automaticamente a documentação interativa. Após iniciar o servidor, acesse:
+- `GET /health`: Verificação de saúde.
+- `POST /register`: Registro de usuário.
+- `POST /login`: Login de usuário. Retorna um token temporário se o 2FA estiver ativado.
+- `POST /login/2fa`: Verifica o código 2FA e obtém um token de acesso final.
+- `GET /protected`: Um endpoint protegido que requer autenticação.
+- `POST /logs`: Adiciona uma entrada de log para o usuário atual.
+- `POST /2fa/setup`: Configura o 2FA para o usuário atual, retornando um QR Code para ser lido por aplicativos de autenticação.
+- `POST /2fa/verify`: Verifica o código 2FA.
 
-- **Swagger UI:** http://127.0.0.1:8000/docs
-- **ReDoc:** http://127.0.0.1:8000/redoc
-
-## 🔗 Endpoints Principais
-
-### Autenticação
-- `POST /register`: Cria um novo usuário.
-  - Body: `{"username": "seu_usuario", "password": "sua_senha"}`
-- `POST /login`: Autentica o usuário e retorna um `access_token`.
-  - Body: `{"username": "seu_usuario", "password": "sua_senha"}`
-
-### Rotas Protegidas (Requer Token Bearer)
-Para acessar estas rotas, você deve enviar o token no header: `Authorization: Bearer <token>`.
-
-- `GET /protected`: Retorna uma mensagem de sucesso e o nome do usuário logado.
-- `POST /logs`: Salva uma ação de log no banco de dados vinculada ao usuário atual.
-  - Body: `{"user_id": 0, "action": "Descrição da ação"}` (O `user_id` no body é ignorado em favor do usuário autenticado, mas o schema atual o solicita).
-
-### Utilitários
-- `GET /health`: Checagem de saúde da API (`{"status": "ok"}`).
-
-## 📂 Estrutura de Arquivos
-
-- `main.py`: Ponto de entrada da aplicação e definição das rotas.
-- `models.py`: Modelos do banco de dados (Tabelas `users` e `logs`).
-- `schemas.py`: Modelos Pydantic para validação de dados (Request/Response).
-- `crud.py`: Funções para criar, ler e atualizar dados no banco.
-- `auth.py`: Lógica de segurança (Hash de senha e Tokens JWT).
-- `database.py`: Configuração da conexão com o PostgreSQL.
-
-## 📝 Logs do Sistema
-
-Além dos logs salvos no banco de dados via endpoint, a aplicação gera um arquivo local chamado `app.log` contendo informações sobre logins e acessos.
-
----
+Você pode acessar a documentação interativa da API em `http://127.0.0.1:8000/docs`.

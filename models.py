@@ -7,6 +7,7 @@ class User(Base): # Define a classe User que representa a tabela de usuários no
     id = Column(Integer, primary_key=True, index=True) # Define a coluna 'id' como chave primária e índice
     username = Column(String, unique=True, index=True) # Define a coluna 'username' como string, única e índice
     hashed_password = Column(String) # Define a coluna 'hashed_password' como string para armazenar a senha hashada
+    totp_secret = Column(String, nullable=True) # Segredo para 2FA
 
 
 

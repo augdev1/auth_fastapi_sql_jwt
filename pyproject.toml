@@ -5,7 +5,7 @@ description = ""
 authors = [
     {name = "augdev1",email = "augustosousa1798@gmail.com"}
 ]
-requires-python = ">=3.10"
+requires-python = ">=3.10,<4.0"
 dependencies = [
     "fastapi (>=0.134.0,<0.135.0)",
     "uvicorn (>=0.41.0,<0.42.0)",
@@ -16,7 +16,9 @@ dependencies = [
     "passlib (>=1.7.4,<2.0.0)",
     "python-jose (>=3.5.0,<4.0.0)",
     "python-multipart (>=0.0.22,<0.0.23)",
-    "bcrypt (==3.2.2)"
+    "bcrypt (==3.2.2)",
+    "pyotp (>=2.9.0,<3.0.0)",
+    "qrcode[pil] (>=8.2,<9.0)"
 ]
 
 
