@@ -28,6 +28,21 @@ Este projeto foi desenvolvido para aplicar conceitos reais de Cibersegurança (B
 - Endpoints protegidos exigindo validação de token Bearer.
 - Migrações de banco de dados rastreáveis com Alembic.
 
+## Projeto em funcionamento:
+TOKEN DE ACESSO
+<img width="1920" height="1080" alt="token_api" src="https://github.com/user-attachments/assets/db3f1222-72a4-40f8-a235-c3f14d157268" />
+
+TOKEN AUTORIZADO
+<img width="1920" height="1080" alt="token_autorizado" src="https://github.com/user-attachments/assets/524548f7-2516-4dd3-82d4-c8be6014f4de" />
+
+GERADOR DE QR CODE APÓS CRIAÇÃO DE USER
+<img width="1920" height="1080" alt="qr_code_gerado" src="https://github.com/user-attachments/assets/1a34e767-b65c-4c73-82e7-9b471ef60f39" />
+
+LOGIN COM AUTENTICAÇÃO DE DOIS FATORES USANDO O "temp_token" recebido do endpoint "Login" E DO "code" QUE É GERADO APÓS VINCULAÇÃO COM O GOOGLE AUTHENTICATOR
+<img width="1920" height="1080" alt="login_c_2fa" src="https://github.com/user-attachments/assets/39af0a8e-b840-420d-b4ad-344b54091a88" />
+
+![WhatsApp Image 2026-03-05 at 07 10 04](https://github.com/user-attachments/assets/0ac89a8f-f362-43e6-9d9c-d92a1140b5e4)
+
 ## Estrutura do Projeto
 
 ```
@@ -63,8 +78,9 @@ Este projeto foi desenvolvido para aplicar conceitos reais de Cibersegurança (B
 - `POST /login/2fa`: Verifica o código 2FA e obtém um token de acesso final.
 - `GET /protected`: Um endpoint protegido que requer autenticação.
 - `POST /logs`: Adiciona uma entrada de log para o usuário atual.
-- `POST /2fa/setup`: Configura o 2FA para o usuário atual, retornando um QR Code para ser lido por aplicativos de autenticação.
 - `POST /2fa/verify`: Verifica o código 2FA.
+- `POST /generate-qrcode`: Recebe o otpauth_url no corpo da requisição e retorna a imagem PNG do QR Code.
+- `POST /2fa/setup`: Configura o 2FA para o usuário atual, retornando um QR Code para ser lido por aplicativos de autenticação.
 
 Você pode acessar a documentação interativa da API em `http://127.0.0.1:8000/docs`.
 
