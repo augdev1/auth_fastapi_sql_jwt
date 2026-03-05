@@ -78,8 +78,9 @@ LOGIN COM AUTENTICAÇÃO DE DOIS FATORES USANDO O "temp_token" recebido do endpo
 - `POST /login/2fa`: Verifica o código 2FA e obtém um token de acesso final.
 - `GET /protected`: Um endpoint protegido que requer autenticação.
 - `POST /logs`: Adiciona uma entrada de log para o usuário atual.
-- `POST /2fa/setup`: Configura o 2FA para o usuário atual, retornando um QR Code para ser lido por aplicativos de autenticação.
 - `POST /2fa/verify`: Verifica o código 2FA.
+- `POST /generate-qrcode`: Recebe o otpauth_url no corpo da requisição e retorna a imagem PNG do QR Code.
+- `POST /2fa/setup`: Configura o 2FA para o usuário atual, retornando um QR Code para ser lido por aplicativos de autenticação.
 
 Você pode acessar a documentação interativa da API em `http://127.0.0.1:8000/docs`.
 
