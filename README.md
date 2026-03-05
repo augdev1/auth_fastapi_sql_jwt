@@ -28,6 +28,20 @@ Este projeto foi desenvolvido para aplicar conceitos reais de Cibersegurança (B
 - Endpoints protegidos exigindo validação de token Bearer.
 - Migrações de banco de dados rastreáveis com Alembic.
 
+## Projeto em funcionamento:
+TOKEN DE ACESSO
+![Uploading token_api.png…]()
+
+TOKEN AUTORIZADO
+![Uploading tokeb_autorizado.png…]()
+
+GERADOR DE QR CODE APÓS CRIAÇÃO DE USER
+![Uploading qr_code_gerado.png…]()
+
+LOGIN COM AUTENTICAÇÃO DE DOIS FATORES APÓS JA TER VINCULADO COM O GOOGLE AUTHENTICATOR
+![Uploading login_c_2fa.png…]()
+
+
 ## Estrutura do Projeto
 
 ```
