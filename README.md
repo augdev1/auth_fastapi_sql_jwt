@@ -29,7 +29,7 @@ Este projeto foi desenvolvido para aplicar conceitos reais de Cibersegurança (B
 - Migrações de banco de dados rastreáveis com Alembic.
 
 ## Projeto em funcionamento:
-TOKEN DE ACESSO APOS LOGAR NO USER CRIADO
+TOKEN DE ACESSO APÓS LOGAR NO USER CRIADO
 <img width="1920" height="1080" alt="token_api" src="https://github.com/user-attachments/assets/830211b5-b719-4cf3-82f6-332777c7d294" />
 
 GERADOR DE QR CODE APÓS CRIAÇÃO DE USER
