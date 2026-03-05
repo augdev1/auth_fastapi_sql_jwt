@@ -30,17 +30,18 @@ Este projeto foi desenvolvido para aplicar conceitos reais de Cibersegurança (B
 
 ## Projeto em funcionamento:
 TOKEN DE ACESSO
-![Uploading token_api.png…]()
+<img width="1920" height="1080" alt="token_api" src="https://github.com/user-attachments/assets/db3f1222-72a4-40f8-a235-c3f14d157268" />
 
 TOKEN AUTORIZADO
-![Uploading tokeb_autorizado.png…]()
+<img width="1920" height="1080" alt="token_autorizado" src="https://github.com/user-attachments/assets/524548f7-2516-4dd3-82d4-c8be6014f4de" />
 
 GERADOR DE QR CODE APÓS CRIAÇÃO DE USER
-![Uploading qr_code_gerado.png…]()
+<img width="1920" height="1080" alt="qr_code_gerado" src="https://github.com/user-attachments/assets/1a34e767-b65c-4c73-82e7-9b471ef60f39" />
 
-LOGIN COM AUTENTICAÇÃO DE DOIS FATORES APÓS JA TER VINCULADO COM O GOOGLE AUTHENTICATOR
-![Uploading login_c_2fa.png…]()
+LOGIN COM AUTENTICAÇÃO DE DOIS FATORES USANDO O "temp_token" recebido do endpoint "Login" E DO "code" QUE É GERADO APÓS VINCULAÇÃO COM O GOOGLE AUTHENTICATOR
+<img width="1920" height="1080" alt="login_c_2fa" src="https://github.com/user-attachments/assets/39af0a8e-b840-420d-b4ad-344b54091a88" />
 
+![WhatsApp Image 2026-03-05 at 07 10 04](https://github.com/user-attachments/assets/0ac89a8f-f362-43e6-9d9c-d92a1140b5e4)
 
 ## Estrutura do Projeto
 
