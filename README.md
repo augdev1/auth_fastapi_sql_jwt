@@ -81,7 +81,6 @@ Certifique-se de que essas variáveis correspondem às configurações do seu ba
 ### Executando a Aplicação
 
 Para executar a aplicação, use o uvicorn:
->>>>>>> 2f1e8dd (Atualiza README com foco em segurança e adiciona SECURITY_README.md)
 
  ```bash
 poetry install
@@ -111,7 +110,6 @@ POST /login/2fa: Validação do desafio TOTP e emissão do token final.
 POST /2fa/setup: Gera seed e QR Code para aplicativos de MFA.
 POST /logs: Geração de trilha de auditoria do usuário.
 ```
-=======
 
 A aplicação estará disponível em `http://127.0.0.1:8000`.
 
@@ -127,27 +125,3 @@ A aplicação estará disponível em `http://127.0.0.1:8000`.
 - `POST /2fa/verify`: Verifica o código 2FA.
 
 Você pode acessar a documentação interativa da API em `http://127.0.0.1:8000/docs`.
-
-## Sobre o Projeto
-
-API de autenticação moderna e segura construída com FastAPI, focada em Identity and Access Management (IAM) e mitigação de vulnerabilidades comuns de autenticação.
-
-Este projeto foi desenvolvido para aplicar conceitos reais de Cibersegurança (Blue Team/AppSec) no desenvolvimento backend, implementando defesa em profundidade com tokens JWT, autenticação multifator (MFA/2FA) e auditoria de logs.
-
-(Insira aqui um print ou GIF curto da interface do Swagger ou da geração do QR Code)
-
-### 🔐 Destaques de Segurança (Security Features)
-
-- **Defesa contra Brute Force/Credential Stuffing:** Implementação de Autenticação em Duas Etapas (2FA) via algoritmo TOTP (Time-based One-Time Password), integrado com Google Authenticator.
-- **Gerenciamento Seguro de Sessão:** Uso de JSON Web Tokens (JWT) com tempo de expiração curto para tokens de acesso.
-- **Proteção de Dados em Repouso:** Senhas de usuários NUNCA são salvas em texto claro (utilizando hashing forte - Bcrypt).
-- **Trilha de Auditoria (Logging):** Registro de ações de login e acesso a endpoints críticos, fundamental para análise em SOC e resposta a incidentes.
-- **Prevenção de Vazamento de Credenciais:** Configuração baseada estritamente em Variáveis de Ambiente (.env).
-
-### ⚙️ Funcionalidades
-
-- Registro de usuário e Login seguro.
-- Geração de QR Code dinâmico para pareamento de aplicativos autenticadores.
-- Endpoints protegidos exigindo validação de token Bearer.
-- Migrações de banco de dados rastreáveis com Alembic.
->>>>>>> 2f1e8dd (Atualiza README com foco em segurança e adiciona SECURITY_README.md)
