@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 from datetime import timedelta
 from sqlalchemy.orm import Session
 import logging
@@ -10,6 +10,17 @@ from database import get_db
 import qrcode
 import io # Biblioteca para manipulação de arquivos em memória, usada para gerar a imagem do QR Code sem precisar salvar no disco
 import base64 # Biblioteca para codificação e decodificação de dados em Base64, usada para converter a imagem do QR Code em uma string que pode ser facilmente transmitida na resposta da API
+from io import BytesIO
+import pyotp
+from pydantic import BaseModel
+
+class OTPAuthURLRequest(BaseModel):
+    otpauth_url: str
+
+class TOTPSetupResponse(BaseModel):
+    secret: str
+    qr_code_base64: str
+    otpauth_url: str
 
 app = FastAPI()
 models.Base.metadata.create_all(bind=database.engine) # Cria as tabelas no banco de dados com base nos modelos definidos em models.py
@@ -25,7 +36,7 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return user
-
+    
 
 #health check
 @app.get("/health")
@@ -95,25 +106,6 @@ def add_log(log: schemas.LogCreate, current_user: models.User = Depends(get_curr
        crud.create_log(db, user_id=current_user.id, action=log.action)
        return {"message": "Log added successfully"}
 
-@app.post("/2fa/setup", response_model=schemas.TOTPSetupResponse) # Endpoint para configurar a autenticação de dois fatores (2FA) para o usuário atual, gerando um segredo TOTP, salvando-o no banco de dados e retornando as informações necessárias para configurar o 2FA no aplicativo de autenticação do usuário
-def setup_2fa(current_user: models.User = Depends(get_current_user), db: Session = Depends(database.get_db)):
-    # 1. Gerar segredo
-    secret = auth.generate_totp_secret()
-    
-    # 2. Salvar no banco (Nota: Em um fluxo ideal, salvaríamos apenas após a primeira verificação com sucesso)
-    crud.update_user_totp_secret(db, current_user.id, secret)
-    
-    # 3. Gerar URI para o QR Code
-    uri = auth.get_totp_uri(current_user.username, secret)
-    
-    # 4. Gerar imagem QR Code em Base64
-    img = qrcode.make(uri)
-    buffered = io.BytesIO()
-    img.save(buffered, format="PNG")
-    img_str = base64.b64encode(buffered.getvalue()).decode("utf-8")
-    
-    return {"secret": secret, "qr_code_base64": img_str, "otpauth_url": uri}
-
 @app.post("/2fa/verify") #  Endpoint para verificar o código TOTP fornecido pelo usuário, garantindo que ele corresponda ao segredo armazenado no banco de dados para o usuário atual, e retornando uma mensagem de sucesso ou erro com base na verificação
 def verify_2fa(verification: schemas.TOTPVerify, current_user: models.User = Depends(get_current_user)):
     if not current_user.totp_secret:
@@ -123,3 +115,49 @@ def verify_2fa(verification: schemas.TOTPVerify, current_user: models.User = Dep
         raise HTTPException(status_code=400, detail="Invalid TOTP code")
         
     return {"message": "TOTP verified successfully"}
+
+# Endpoint para gerar QR Code
+@app.post("/generate-qrcode")
+def generate_qrcode(request: OTPAuthURLRequest):
+    # Generate QR Code image
+    qr = qrcode.QRCode(version=1, box_size=10, border=5)
+    qr.add_data(request.otpauth_url)
+    qr.make(fit=True)
+    img = qr.make_image(fill_color="black", back_color="white")
+
+    # Convert image to BytesIO for streaming
+    img_byte_arr = BytesIO()
+    img.save(img_byte_arr, format="PNG")
+    img_byte_arr.seek(0)
+
+    # Return the image as a StreamingResponse
+    return StreamingResponse(img_byte_arr, media_type="image/png")
+
+@app.post("/2fa/setup", response_model=schemas.TOTPSetupResponse)
+def setup_2fa(current_user: models.User = Depends(get_current_user), db: Session = Depends(database.get_db)):
+    # 1. Generate TOTP secret
+    secret = pyotp.random_base32()
+
+    # 2. Save the secret to the database
+    crud.update_user_totp_secret(db, current_user.id, secret)
+
+    # 3. Generate the TOTP URI
+    issuer_name = "MyApp"  # Replace with your app's name
+    otpauth_url = f"otpauth://totp/{issuer_name}:{current_user.username}?secret={secret}&issuer={issuer_name}"
+
+    # 4. Generate QR Code as Base64
+    qr = qrcode.QRCode(version=1, box_size=10, border=5)
+    qr.add_data(otpauth_url)
+    qr.make(fit=True)
+    img = qr.make_image(fill_color="black", back_color="white")
+
+    buffered = BytesIO()
+    img.save(buffered, format="PNG")
+    img_str = base64.b64encode(buffered.getvalue()).decode("utf-8")
+
+    # Return JSON response
+    return schemas.TOTPSetupResponse(
+        secret=secret,
+        qr_code_base64=img_str,
+        otpauth_url=otpauth_url
+    )
