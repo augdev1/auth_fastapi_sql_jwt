@@ -38,8 +38,6 @@ GERADOR DE QR CODE APÓS CRIAÇÃO DE USER
 LOGIN COM AUTENTICAÇÃO DE DOIS FATORES USANDO O "temp_token" recebido do endpoint "Login" E DO "code" QUE É GERADO APÓS VINCULAÇÃO COM O GOOGLE AUTHENTICATOR
 <img width="1920" height="1080" alt="login_c_2fa" src="https://github.com/user-attachments/assets/23ff1f42-da26-4d7e-be66-9c7fca12a5aa" />
 
-![WhatsApp Image 2026-03-05 at 07 10 04](https://github.com/user-attachments/assets/0ac89a8f-f362-43e6-9d9c-d92a1140b5e4)
-
 ## Estrutura do Projeto
 
 ```
