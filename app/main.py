@@ -8,8 +8,9 @@ from datetime import timedelta
 from typing import List
 from sqlalchemy.orm import Session
 import logging
-import crud, schemas, auth, database, models
-from database import get_db
+from . import crud, schemas, auth, database, models
+from .database import get_db
+
 
 import qrcode
 import io # Biblioteca para manipulação de arquivos em memória, usada para gerar a imagem do QR Code sem precisar salvar no disco
@@ -181,14 +182,18 @@ def get_user_logs(current_user: models.User = Depends(get_current_user), db: Ses
     return crud.get_logs(db, user_id=current_user.id)
 
 # Servir arquivos estáticos do frontend
-if not os.path.exists("static"):
-    os.makedirs("static")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+STATIC_DIR = os.path.join(BASE_DIR, "static")
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
+if not os.path.exists(STATIC_DIR):
+    os.makedirs(STATIC_DIR)
+
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 @app.get("/")
 def read_index():
-    index_file = os.path.join("static", "index.html")
+    index_file = os.path.join(STATIC_DIR, "index.html")
     if os.path.exists(index_file):
         return FileResponse(index_file)
-    return {"message": "API rodando. Interface web não encontrada em static/index.html"}
+    return {"message": "API rodando. Interface web não encontrada em static/index.html"}
+

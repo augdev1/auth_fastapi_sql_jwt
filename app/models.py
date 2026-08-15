@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Integer, String, func # Importa as classes necessárias do SQLAlchemy para definir os modelos de dados
-from database import Base
+from .database import Base
+
 
 
 class User(Base): # Define a classe User que representa a tabela de usuários no banco de dados

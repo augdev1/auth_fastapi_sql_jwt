@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
-import models, schemas
+from . import models, schemas
+
 
 pwd_context = CryptContext(
     schemes=["pbkdf2_sha256"],

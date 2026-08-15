@@ -45,23 +45,24 @@ O projeto possui uma **Single Page Application (SPA)** responsiva embutida, serv
 
 ```
 .
-├── alembic.ini
-├── app.log
-├── auth.py
-├── crud.py
-├── database.py
-├── main.py
-├── models.py
+├── app/                  # Pacote da Aplicação FastAPI
+│   ├── __init__.py
+│   ├── main.py           # Aplicação FastAPI e rotas
+│   ├── auth.py           # Regras de Autenticação (JWT, TOTP/2FA)
+│   ├── crud.py           # Operações de Banco de Dados
+│   ├── database.py       # Conexão SQLAlchemy e fallback SQLite
+│   ├── models.py         # Modelos de Tabelas ORM
+│   ├── schemas.py        # Schemas Pydantic
+│   └── static/           # Interface Web SPA Glassmorphism
+│       ├── index.html    # Estrutura HTML5 da SPA
+│       ├── style.css     # Design System Preto & Dourado Glassmorphism
+│       └── app.js        # Lógica Frontend, Fetch API, JWT & 2FA
+├── migrations/           # Migrações do banco via Alembic
+├── alembic.ini           # Configuração do Alembic
 ├── poetry.lock
 ├── pyproject.toml
 ├── README.md
-├── requirements.txt
-├── schemas.py
-├── migrations/
-└── static/
-    ├── index.html   # Estrutura HTML5 da SPA Glassmorphism
-    ├── style.css    # Design System Preto & Dourado Glassmorphism
-    └── app.js       # Controle de Estado, Fetch API, JWT & 2FA
+└── requirements.txt
 ```
 
 ---
@@ -107,11 +108,12 @@ poetry install
 
 ### 3. Iniciar o Servidor
 
-Execute o Uvicorn com o comando:
+Execute o Uvicorn com o módulo da aplicação:
 
 ```bash
-python -m uvicorn main:app --reload
+python -m uvicorn app.main:app --reload
 ```
 
 Acesse a interface gráfica no seu navegador:
 👉 **[http://127.0.0.1:8000](http://127.0.0.1:8000)**
+
