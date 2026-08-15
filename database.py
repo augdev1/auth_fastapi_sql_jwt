@@ -13,10 +13,17 @@ DB_NAME = os.getenv("DB_NAME")
 DB_USER = os.getenv("DB_USER")
 DB_PASSWORD = os.getenv("DB_PASSWORD")
 
-# Formato: postgresql://usuario:senha@host:porta/nome_do_banco
-SQLALCHEMY_DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
-
-engine = create_engine(SQLALCHEMY_DATABASE_URL)
+# Utiliza PostgreSQL se configurado, ou faz fallback para SQLite local caso contrário
+if DB_HOST and DB_PORT and DB_NAME and DB_USER and DB_PASSWORD:
+    SQLALCHEMY_DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+    try:
+        engine = create_engine(SQLALCHEMY_DATABASE_URL)
+    except Exception:
+        SQLALCHEMY_DATABASE_URL = "sqlite:///./app.db"
+        engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
+else:
+    SQLALCHEMY_DATABASE_URL = "sqlite:///./app.db"
+    engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
@@ -27,4 +34,4 @@ def get_db():
     try:
         yield db
     finally:
-        db.close()
+        db.close()

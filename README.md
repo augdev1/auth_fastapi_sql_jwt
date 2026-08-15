@@ -1,44 +1,47 @@
-# Auth FastAPI - Segurança em Foco
+# Auth FastAPI - Segurança em Foco & Interface Glassmorphism
 
-API de autenticação moderna e segura construída com FastAPI, focada em Identity and Access Management (IAM) e mitigação de vulnerabilidades comuns de autenticação.
+API de autenticação moderna e segura construída com FastAPI, focada em Identity and Access Management (IAM), autenticação JWT e multifator (2FA/TOTP), acompanhada de uma **Interface Web SPA (Single Page Application) em Glassmorphism Preto & Dourado**.
 
-Este projeto foi desenvolvido para aplicar conceitos reais de Cibersegurança (Blue Team/AppSec) no desenvolvimento backend, implementando defesa em profundidade com tokens JWT, autenticação multifator (MFA/2FA) e auditoria de logs.
+![AuthFastAPI Black & Gold UI](https://img.shields.io/badge/UI-Black%20%26%20Gold%20Glassmorphism-d4af37?style=for-the-badge)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.134+-009688?style=for-the-badge&logo=fastapi)
+![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python)
+
+---
+
+## 🎨 Interface Web (Black & Gold Glassmorphism)
+
+O projeto possui uma **Single Page Application (SPA)** responsiva embutida, servida diretamente na rota `/` (`http://localhost:8000/`):
+
+- **Design System Premium**: Visual em tom obsidiana e dourado champanhe com transparências `backdrop-filter: blur(16px)` e brilhos neon dourados.
+- **Fluxo de Login & Registro**: Alternância suave por abas e suporte a validação de token JWT.
+- **Modal Interativo 2FA**: Ao tentar logar com 2FA ativado, o sistema abre automaticamente um modal para inserção do código de 6 dígitos.
+- **Gerenciador TOTP**: Gerador de QR Code em tempo real (Base64) para escaneamento no Google Authenticator / Authy, cópia rápida da chave secreta e validação.
+- **Trilha de Auditoria (Logs)**: Interface visual para registrar novas ações e listar o histórico completo de logs de segurança.
+- **Testador de Rotas**: Botão de teste para disparar chamadas autenticadas para `GET /protected`.
+- **100% Responsivo**: Layout otimizado para navegação em Smartphones, Tablets e Desktops.
+
+---
 
 ## 🔐 Destaques de Segurança (Security Features)
 
 - **Defesa contra Brute Force/Credential Stuffing:**
-  - Implementação de Autenticação em Duas Etapas (2FA) via algoritmo TOTP (Time-based One-Time Password), integrado com Google Authenticator.
+  - Implementação de Autenticação em Duas Etapas (2FA) via algoritmo TOTP (Time-based One-Time Password), integrado com aplicativos como Google Authenticator e Authy.
 
 - **Gerenciamento Seguro de Sessão:**
-  - Uso de JSON Web Tokens (JWT) com tempo de expiração curto para tokens de acesso.
+  - Uso de JSON Web Tokens (JWT) com suporte a tokens temporários de curta duração durante a etapa intermediária do 2FA.
 
 - **Proteção de Dados em Repouso:**
-  - Senhas de usuários NUNCA são salvas em texto claro (utilizando hashing forte - Bcrypt).
+  - Senhas de usuários salvas utilizando hashing forte (PBKDF2 / Bcrypt com salting).
 
 - **Trilha de Auditoria (Logging):**
-  - Registro de ações de login e acesso a endpoints críticos, fundamental para análise em SOC e resposta a incidentes.
+  - Registro de ações de login, geração de 2FA e ações personalizadas dos usuários em banco de dados e arquivo de log.
 
-- **Prevenção de Vazamento de Credenciais:**
-  - Configuração baseada estritamente em Variáveis de Ambiente (.env).
+- **Fallback de Banco de Dados Flexível:**
+  - Suporte automático a **PostgreSQL** ou fallback para **SQLite local (`sqlite:///./app.db`)** caso o serviço Postgres não esteja configurado, permitindo rodar a aplicação instantaneamente.
 
-## ⚙️ Funcionalidades
+---
 
-- Registro de usuário e Login seguro.
-- Geração de QR Code dinâmico para pareamento de aplicativos autenticadores.
-- Endpoints protegidos exigindo validação de token Bearer.
-- Migrações de banco de dados rastreáveis com Alembic.
-
-## Projeto em funcionamento:
-TOKEN DE ACESSO APÓS LOGAR NO USER CRIADO
-<img width="1920" height="1080" alt="token_api" src="https://github.com/user-attachments/assets/830211b5-b719-4cf3-82f6-332777c7d294" />
-
-GERADOR DE QR CODE APÓS CRIAÇÃO DE USER
-<img width="1920" height="639" alt="qr_code_gerado" src="https://github.com/user-attachments/assets/3a57d0a3-8078-4e9a-91b6-25250a76b017" />
-
-LOGIN COM AUTENTICAÇÃO DE DOIS FATORES USANDO O "temp_token" recebido do endpoint "Login" E DO "code" QUE É GERADO APÓS VINCULAÇÃO COM O GOOGLE AUTHENTICATOR
-<img width="1920" height="1080" alt="login_c_2fa" src="https://github.com/user-attachments/assets/23ff1f42-da26-4d7e-be66-9c7fca12a5aa" />
-
-## Estrutura do Projeto
+## ⚙️ Estrutura do Projeto
 
 ```
 .
@@ -54,82 +57,61 @@ LOGIN COM AUTENTICAÇÃO DE DOIS FATORES USANDO O "temp_token" recebido do endpo
 ├── README.md
 ├── requirements.txt
 ├── schemas.py
-├── .git/
-├── .venv/
-├── .vscode/
-│   └── settings.json
-└── migrations/
-    ├── env.py
-    ├── README
-    ├── script.py.mako
-    └── versions/
+├── migrations/
+└── static/
+    ├── index.html   # Estrutura HTML5 da SPA Glassmorphism
+    ├── style.css    # Design System Preto & Dourado Glassmorphism
+    └── app.js       # Controle de Estado, Fetch API, JWT & 2FA
 ```
 
-## Endpoints da API
+---
 
-- `GET /health`: Verificação de saúde.
-- `POST /register`: Registro de usuário.
-- `POST /login`: Login de usuário. Retorna um token temporário se o 2FA estiver ativado.
-- `POST /login/2fa`: Verifica o código 2FA e obtém um token de acesso final.
-- `GET /protected`: Um endpoint protegido que requer autenticação.
-- `POST /logs`: Adiciona uma entrada de log para o usuário atual.
-- `POST /2fa/verify`: Verifica o código 2FA.
-- `POST /generate-qrcode`: Recebe o otpauth_url no corpo da requisição e retorna a imagem PNG do QR Code.
-- `POST /2fa/setup`: Configura o 2FA para o usuário atual, retornando um QR Code para ser lido por aplicativos de autenticação.
+## 🔌 Endpoints da API
 
-Você pode acessar a documentação interativa da API em `http://127.0.0.1:8000/docs`.
+- `GET /` - Serve a Interface Web SPA (Glassmorphism).
+- `GET /health` - Verificação de status da API.
+- `POST /register` - Registro de novo usuário.
+- `POST /login` - Login inicial. Retorna `access_token` ou `temp_token` (se o 2FA estiver ativo).
+- `POST /login/2fa` - Validação do código TOTP com `temp_token` para obter o `access_token` final.
+- `GET /protected` - Endpoint de exemplo protegido exigindo Bearer Token.
+- `POST /2fa/setup` - Gera novo segredo TOTP e QR Code em Base64 para o usuário logado.
+- `POST /2fa/verify` - Valida o código de 6 dígitos para confirmação da ativação do 2FA.
+- `POST /generate-qrcode` - Gera imagem PNG de QR Code a partir de uma URL OTPAuth.
+- `POST /logs` - Adiciona uma nova entrada de log para o usuário autenticado.
+- `GET /logs` - Retorna a lista de logs do usuário autenticado.
 
-## Instalação
+Documentação Swagger/OpenAPI interativa: `http://127.0.0.1:8000/docs`
 
-### Pré-requisitos
+---
 
-- Python 3.10+
-- Poetry
-- PostgreSQL
+## 🚀 Como Executar
 
-### Passos
+### 1. Clonar o Repositório
 
-1. **Clone o repositório:**
+```bash
+git clone https://github.com/augdev1/auth_fastapi_sql_jwt.git
+cd auth_fastapi_sql_jwt
+```
 
-    ```bash
-    git clone https://github.com/augdev1/auth_fastapi_sql_jwt.git
-    cd auth-fastapi
-    ```
+### 2. Instalar Dependências
 
-2. **Instale as dependências usando o Poetry:**
+Usando `pip`:
+```bash
+pip install -r requirements.txt
+```
 
-    ```bash
-    poetry install
-    ```
+Ou usando `poetry`:
+```bash
+poetry install
+```
 
-3. **Configure o banco de dados:**
+### 3. Iniciar o Servidor
 
-    Antes de executar a aplicação, crie um arquivo `.env` na raiz do projeto e adicione as variáveis de configuração do banco de dados:
+Execute o Uvicorn com o comando:
 
-    ```
-    DB_HOST=localhost
-    DB_PORT=5432
-    DB_NAME=seu_banco
-    DB_USER=seu_usuario
-    DB_PASSWORD=sua_senha
-    ```
+```bash
+python -m uvicorn main:app --reload
+```
 
-    Certifique-se de que essas variáveis correspondem às configurações do seu banco de dados PostgreSQL.
-
-4. **Execute as migrações do banco de dados:**
-
-    Atualize a `sqlalchemy.url` em `alembic.ini` para corresponder à sua string de conexão do banco de dados e execute:
-
-    ```bash
-    alembic upgrade head
-    ```
-
-5. **Execute a aplicação:**
-
-    Para executar a aplicação, use o uvicorn:
-
-    ```bash
-    uvicorn main:app --reload
-    ```
-
-    A aplicação estará disponível em `http://127.0.0.1:8000`.
+Acesse a interface gráfica no seu navegador:
+👉 **[http://127.0.0.1:8000](http://127.0.0.1:8000)**

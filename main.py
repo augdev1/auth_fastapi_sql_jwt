@@ -1,7 +1,11 @@
+import os
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from fastapi.responses import JSONResponse, StreamingResponse
+from fastapi.responses import JSONResponse, StreamingResponse, FileResponse
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from datetime import timedelta
+from typing import List
 from sqlalchemy.orm import Session
 import logging
 import crud, schemas, auth, database, models
@@ -23,7 +27,17 @@ class TOTPSetupResponse(BaseModel):
     otpauth_url: str
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 models.Base.metadata.create_all(bind=database.engine) # Cria as tabelas no banco de dados com base nos modelos definidos em models.py
+
 
 security = HTTPBearer()
 logging.basicConfig(filename='app.log', level=logging.INFO) # Configura o logging para registrar as atividades em um arquivo chamado app.log
@@ -161,3 +175,20 @@ def setup_2fa(current_user: models.User = Depends(get_current_user), db: Session
         qr_code_base64=img_str,
         otpauth_url=otpauth_url
     )
+
+@app.get("/logs", response_model=List[schemas.LogResponse])
+def get_user_logs(current_user: models.User = Depends(get_current_user), db: Session = Depends(database.get_db)):
+    return crud.get_logs(db, user_id=current_user.id)
+
+# Servir arquivos estáticos do frontend
+if not os.path.exists("static"):
+    os.makedirs("static")
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+@app.get("/")
+def read_index():
+    index_file = os.path.join("static", "index.html")
+    if os.path.exists(index_file):
+        return FileResponse(index_file)
+    return {"message": "API rodando. Interface web não encontrada em static/index.html"}

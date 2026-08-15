@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuthFastAPI - Sistema de Autenticação & 2FA</title>
+    <!-- Google Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+    <!-- Ambient Glow Background Elements -->
+    <div class="glow-orb orb-1"></div>
+    <div class="glow-orb orb-2"></div>
+    <div class="glow-orb orb-3"></div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <div class="app-layout">
+        <!-- Header -->
+        <header class="top-nav glass-card">
+            <div class="brand">
+                <div class="brand-icon">
+                    <i class="ri-shield-keyhole-line"></i>
+                </div>
+                <div class="brand-text">
+                    <span class="brand-name">Auth<span class="gold-gradient">FastAPI</span></span>
+                    <span class="brand-sub">JWT & 2FA Security</span>
+                </div>
+            </div>
+
+            <div class="nav-right">
+                <div class="status-badge" id="api-status">
+                    <span class="status-dot"></span>
+                    <span class="status-text">Verificando...</span>
+                </div>
+
+                <div id="user-nav" class="user-nav hidden">
+                    <div class="user-badge">
+                        <i class="ri-user-3-line"></i>
+                        <span id="nav-username">Usuário</span>
+                    </div>
+                    <button id="btn-logout" class="btn btn-outline-gold btn-sm">
+                        <i class="ri-logout-box-r-line"></i> Sair
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            
+            <!-- Auth View (Unauthenticated) -->
+            <section id="auth-section" class="auth-wrapper">
+                <div class="auth-card glass-card">
+                    <div class="auth-tabs">
+                        <button class="tab-btn active" data-tab="login-form">
+                            <i class="ri-login-circle-line"></i> Entrar
+                        </button>
+                        <button class="tab-btn" data-tab="register-form">
+                            <i class="ri-user-add-line"></i> Criar Conta
+                        </button>
+                    </div>
+
+                    <!-- Login Form -->
+                    <form id="login-form" class="auth-form active">
+                        <div class="form-header">
+                            <h2>Acesse sua Conta</h2>
+                            <p>Informe suas credenciais para gerar seu token JWT.</p>
+                        </div>
+                        <div class="form-group">
+                            <label for="login-username"><i class="ri-user-line"></i> Usuário</label>
+                            <input type="text" id="login-username" placeholder="Digite seu usuário" required autocomplete="username">
+                        </div>
+                        <div class="form-group">
+                            <label for="login-password"><i class="ri-lock-line"></i> Senha</label>
+                            <input type="password" id="login-password" placeholder="••••••••" required autocomplete="current-password">
+                        </div>
+                        <button type="submit" class="btn btn-gold btn-block">
+                            <span>Entrar no Sistema</span>
+                            <i class="ri-arrow-right-line"></i>
+                        </button>
+                    </form>
+
+                    <!-- Register Form -->
+                    <form id="register-form" class="auth-form">
+                        <div class="form-header">
+                            <h2>Nova Conta</h2>
+                            <p>Cadastre um novo usuário com senha criptografada.</p>
+                        </div>
+                        <div class="form-group">
+                            <label for="reg-username"><i class="ri-user-add-line"></i> Usuário</label>
+                            <input type="text" id="reg-username" placeholder="Escolha um nome de usuário" required autocomplete="username">
+                        </div>
+                        <div class="form-group">
+                            <label for="reg-password"><i class="ri-lock-password-line"></i> Senha</label>
+                            <input type="password" id="reg-password" placeholder="••••••••" required autocomplete="new-password">
+                        </div>
+                        <button type="submit" class="btn btn-gold btn-block">
+                            <span>Cadastrar Usuário</span>
+                            <i class="ri-checkbox-circle-line"></i>
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Dashboard View (Authenticated) -->
+            <section id="dashboard-section" class="dashboard-wrapper hidden">
+                <div class="dashboard-header">
+                    <div>
+                        <h1 class="welcome-title">Bem-vindo, <span id="dash-username" class="gold-gradient">Usuário</span>!</h1>
+                        <p class="welcome-sub">Painel de gerenciamento de sessão, autenticação em dois fatores e auditoria.</p>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    
+                    <!-- Card 1: Session & JWT Info -->
+                    <div class="glass-card dash-card">
+                        <div class="card-title">
+                            <i class="ri-key-2-line gold-icon"></i>
+                            <h3>Sessão & Token JWT</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="info-row">
+                                <span class="info-label">Status da Conta</span>
+                                <span class="badge badge-success"><i class="ri-shield-check-line"></i> Autenticado</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Proteção 2FA</span>
+                                <span id="2fa-status-badge" class="badge badge-warning">Verificando...</span>
+                            </div>
+
+                            <div class="token-box">
+                                <label>Seu Access Token (Bearer):</label>
+                                <div class="token-input-group">
+                                    <input type="text" id="jwt-token-display" readonly value="Nenhum token ativo">
+                                    <button id="btn-copy-token" class="btn btn-icon-gold" title="Copiar Token">
+                                        <i class="ri-file-copy-line"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 2: 2FA Management -->
+                    <div class="glass-card dash-card">
+                        <div class="card-title">
+                            <i class="ri-qr-code-line gold-icon"></i>
+                            <h3>Autenticação 2FA (TOTP)</h3>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-desc">Configure o Google Authenticator ou Authy para proteger sua conta com duas etapas.</p>
+                            
+                            <button id="btn-setup-2fa" class="btn btn-gold btn-block mb-3">
+                                <i class="ri-qr-code-line"></i> Gerar Novo QR Code 2FA
+                            </button>
+
+                            <div id="2fa-setup-display" class="2fa-setup-area hidden">
+                                <div class="qr-container">
+                                    <img id="qr-code-img" src="" alt="QR Code 2FA">
+                                </div>
+                                <div class="secret-box">
+                                    <label>Chave Secreta Manual:</label>
+                                    <div class="token-input-group">
+                                        <input type="text" id="totp-secret-display" readonly>
+                                        <button id="btn-copy-secret" class="btn btn-icon-gold" title="Copiar Chave">
+                                            <i class="ri-file-copy-line"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="form-group mt-3">
+                                    <label for="totp-verify-code">Confirmar Código de 6 Dígitos:</label>
+                                    <div class="verify-group">
+                                        <input type="text" id="totp-verify-code" placeholder="123456" maxlength="6" pattern="[0-9]*" inputmode="numeric">
+                                        <button id="btn-verify-2fa" class="btn btn-outline-gold">Validar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 3: Protected Route Tester -->
+                    <div class="glass-card dash-card">
+                        <div class="card-title">
+                            <i class="ri-shield-flash-line gold-icon"></i>
+                            <h3>Teste de Endpoint Protegido</h3>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-desc">Envie uma requisição HTTP autenticada para <code>GET /protected</code> usando seu JWT Bearer Header.</p>
+                            
+                            <button id="btn-test-protected" class="btn btn-gold btn-block mb-3">
+                                <i class="ri-send-plane-fill"></i> Testar <code>/protected</code>
+                            </button>
+
+                            <div class="response-box">
+                                <label>Resposta do Servidor:</label>
+                                <pre id="protected-response-output">// Clique no botão acima para testar a rota</pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 4: Action Logs -->
+                    <div class="glass-card dash-card full-width">
+                        <div class="card-title justify-between">
+                            <div class="flex-title">
+                                <i class="ri-history-line gold-icon"></i>
+                                <h3>Logs de Auditoria do Usuário</h3>
+                            </div>
+                            <button id="btn-refresh-logs" class="btn btn-outline-gold btn-sm">
+                                <i class="ri-refresh-line"></i> Atualizar
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="log-create-form">
+                                <input type="text" id="log-action-input" placeholder="Descreva uma nova ação para registrar no log (ex: 'Alterou senha', 'Exportou relatório')...">
+                                <button id="btn-add-log" class="btn btn-gold">
+                                    <i class="ri-add-line"></i> Registrar
+                                </button>
+                            </div>
+
+                            <div class="logs-table-container">
+                                <table class="logs-table">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Ação Registrada</th>
+                                            <th>Data / Hora</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="logs-table-body">
+                                        <tr>
+                                            <td colspan="3" class="text-center muted">Nenhum log registrado ainda.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- 2FA Modal Prompt for Login -->
+    <div id="modal-2fa" class="modal-overlay hidden">
+        <div class="modal-card glass-card">
+            <div class="modal-header">
+                <i class="ri-shield-user-line modal-gold-icon"></i>
+                <h3>Autenticação em 2 Etapas</h3>
+                <p>Esta conta possui 2FA ativado. Digite o código de 6 dígitos gerado pelo seu aplicativo autenticador.</p>
+            </div>
+            <form id="form-2fa-login">
+                <div class="form-group">
+                    <input type="text" id="modal-totp-code" placeholder="000 000" maxlength="6" pattern="[0-9]*" inputmode="numeric" required autofocus autocomplete="one-time-code">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" id="btn-cancel-2fa" class="btn btn-outline-gold">Cancelar</button>
+                    <button type="submit" class="btn btn-gold">Verificar e Entrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>

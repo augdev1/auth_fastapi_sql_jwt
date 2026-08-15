@@ -27,3 +27,14 @@ class TOTPSetupResponse(BaseModel):
     secret: str
     qr_code_base64: str
     otpauth_url: str
+
+class LogResponse(BaseModel):
+    id: int
+    user_id: int
+    action: str
+    timestamp: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+        orm_mode = True
+
