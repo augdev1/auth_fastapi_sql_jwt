@@ -9,6 +9,8 @@ API de autenticação moderna e segura construída com FastAPI, focada em Identi
 ---
 
 ## 🎨 Interface Web (Black & Gold Glassmorphism)
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/555493bd-1f27-43ce-b70d-c47dcfbcc494" />
+
 
 O projeto possui uma **Single Page Application (SPA)** responsiva embutida, servida diretamente na rota `/` (`http://localhost:8000/`):
 
